@@ -1,0 +1,5 @@
+requests
+PyMuPDF
+Flask
+Flask-CORS
+ebooklib

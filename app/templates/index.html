@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OCRight - PDF和图片OCR识别工具</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <h1>OCRight</h1>
+            <p>PDF和图片OCR识别工具</p>
+        </header>
+        
+        <div class="ollama-config-bar">
+            <div class="config-container">
+                <div class="config-item">
+                    <label for="ollamaUrl">Ollama服务地址</label>
+                    <input type="text" id="ollamaUrl" value="http://localhost:11434">
+                    <button id="checkOllama" class="btn btn-primary">检查服务</button>
+                    <div id="ollamaStatus" class="status"></div>
+                </div>
+                <div class="config-item">
+                    <label for="modelSelect">选择模型</label>
+                    <select id="modelSelect" disabled>
+                        <option value="">加载中...</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+        
+        <main class="main">
+            <div class="tabs">
+                <button class="tab-btn active" data-tab="pdf">PDF拆分识别</button>
+                <button class="tab-btn" data-tab="image">单图片OCR识别</button>
+            </div>
+            
+            <div class="tab-content" id="pdf-tab">
+                <section class="upload-section" id="pdfUploadSection">
+                    <h2>上传PDF文件</h2>
+                    <div class="upload-area" id="pdfUploadArea">
+                        <input type="file" id="pdfFileInput" accept=".pdf" hidden>
+                        <label for="pdfFileInput" class="upload-label">
+                            <div class="upload-icon">📄</div>
+                            <p>点击或拖放PDF文件到此处</p>
+                            <p class="upload-hint">支持PDF文件</p>
+                        </label>
+                    </div>
+                    <div class="file-info" id="pdfFileInfo" style="display: none;">
+                        <p>已选择: <span id="pdfFileName"></span></p>
+                        <button id="removePdfFile" class="btn btn-secondary">移除文件</button>
+                        <button id="startPdfProcess" class="btn btn-primary" style="margin-left: 10px; display: none;">开始处理</button>
+                    </div>
+                </section>
+                
+                <section class="pdf-progress-section" id="pdfProgressSection" style="display: none;">
+                    <h2>PDF处理进度</h2>
+                    <div class="progress" id="pdfProgressBar">
+                        <div class="progress-bar" style="width: 0%"></div>
+                    </div>
+                    <div class="status-message" id="pdfStatusMessage"></div>
+                    <div class="stop-button-container">
+                        <button id="stopPdfProcess" class="btn btn-danger">停止处理</button>
+                    </div>
+                </section>
+            </div>
+            
+            <div class="tab-content" id="image-tab" style="display: none;">
+                <section class="upload-section">
+                    <h2>上传图片文件</h2>
+                    <div class="upload-area" id="imageUploadArea">
+                        <input type="file" id="imageFileInput" accept=".png,.jpg,.jpeg,.bmp,.gif" hidden>
+                        <label for="imageFileInput" class="upload-label">
+                            <div class="upload-icon">🖼️</div>
+                            <p>点击或拖放图片文件到此处</p>
+                            <p class="upload-hint">支持PNG、JPG、JPEG、BMP、GIF文件</p>
+                        </label>
+                    </div>
+                    <div class="file-info" id="imageFileInfo" style="display: none;">
+                        <p>已选择: <span id="imageFileName"></span></p>
+                        <button id="removeImageFile" class="btn btn-secondary">移除文件</button>
+                    </div>
+                </section>
+            </div>
+            
+            <section class="process-section" id="processSection" style="display: none;">
+                <h2>处理状态</h2>
+                <div class="progress" id="progressBar">
+                    <div class="progress-bar" style="width: 0%"></div>
+                </div>
+                <div class="status-message" id="statusMessage"></div>
+                <button id="startProcess" class="btn btn-primary">开始处理</button>
+            </section>
+            
+            <section class="results-section" id="resultsSection" style="display: none;">
+                <h2>处理结果</h2>
+                <div class="result-item">
+                    <span>识别文本 (TXT):</span>
+                    <a href="#" id="downloadTxt" class="btn btn-secondary">下载</a>
+                </div>
+                <div class="ocr-content" id="ocrContent"></div>
+                <button id="newTask" class="btn btn-primary">新任务</button>
+            </section>
+        </main>
+        
+        <footer class="footer">
+            <p>&copy; 2026 OCRight - PDF和图片OCR识别工具</p>
+        </footer>
+    </div>
+    
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+</body>
+</html>

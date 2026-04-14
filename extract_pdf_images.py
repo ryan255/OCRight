@@ -10,22 +10,33 @@ def extract_images(pdf_path, output_dir):
         pdf_dir = os.path.dirname(pdf_path)
         output_dir = os.path.join(pdf_dir, "output_images")
     
+    print(f"开始提取PDF中的图片")
+    print(f"PDF路径: {pdf_path}")
+    print(f"输出目录: {output_dir}")
+    
     # 确保输出目录存在
     if not os.path.exists(output_dir):
+        print(f"创建输出目录: {output_dir}")
         os.makedirs(output_dir)
+    else:
+        print(f"输出目录已存在: {output_dir}")
     
     # 打开PDF文件
+    print(f"打开PDF文件: {pdf_path}")
     doc = fitz.open(pdf_path)
+    print(f"PDF文件页数: {len(doc)}")
     
     # 图片计数器
     image_count = 1
     
     # 遍历每一页
     for page_num in range(len(doc)):
+        print(f"处理第 {page_num+1} 页")
         page = doc[page_num]
         
         # 获取页面中的图片
         images = page.get_images(full=True)
+        print(f"第 {page_num+1} 页有 {len(images)} 张图片")
         
         # 遍历每一张图片
         for img in images:
@@ -49,6 +60,15 @@ def extract_images(pdf_path, output_dir):
     
     doc.close()
     print(f"\n提取完成，共提取 {image_count-1} 张图片")
+    
+    # 检查输出目录中的图片文件
+    if os.path.exists(output_dir):
+        image_files = [f for f in os.listdir(output_dir) if f.endswith(('.png', '.jpg', '.jpeg', '.bmp', '.gif', '.jpx'))]
+        print(f"输出目录中有 {len(image_files)} 张图片")
+        if image_files:
+            print(f"前5张图片: {image_files[:5]}")
+    else:
+        print("输出目录不存在")
 
 
 if __name__ == "__main__":

@@ -87,23 +87,50 @@ def process_images(input_dir, output_file, model, ollama_url="http://localhost:1
     else:
         # 处理图片目录
         # 获取目录中的所有图片文件并按数字顺序排序
-        image_files = []
-        for file in os.listdir(input_dir):
-            if file.endswith(('.png', '.jpg', '.jpeg', '.bmp', '.gif')):
-                image_files.append(file)
+        print(f"正在检查目录: {input_dir}")
+        print(f"目录是否存在: {os.path.exists(input_dir)}")
         
-        # 按数字顺序排序
-        def sort_key(filename):
-            # 提取文件名中的数字部分
-            import re
-            match = re.search(r'\d+', filename)
-            if match:
-                return int(match.group())
-            return 0
-        
-        image_files.sort(key=sort_key)
-        total_images = len(image_files)
-        print(f"发现 {total_images} 张图片")
+        if os.path.exists(input_dir):
+            all_files = os.listdir(input_dir)
+            print(f"目录中的文件数量: {len(all_files)}")
+            
+            # 打印前10个文件
+            if all_files:
+                print(f"前10个文件: {all_files[:10]}")
+            
+            image_files = []
+            for file in all_files:
+                # 打印每个文件的扩展名
+                ext = os.path.splitext(file)[1].lower()
+                print(f"检查文件: {file}, 扩展名: {ext}")
+                # 直接使用.endswith方法，不区分大小写
+                if file.lower().endswith(('.png', '.jpg', '.jpeg', '.bmp', '.gif', '.jpx')):
+                    image_files.append(file)
+            
+            # 按数字顺序排序
+            def sort_key(filename):
+                # 提取文件名中的数字部分
+                import re
+                match = re.search(r'\d+', filename)
+                if match:
+                    return int(match.group())
+                return 0
+            
+            image_files.sort(key=sort_key)
+            total_images = len(image_files)
+            print(f"发现 {total_images} 张图片")
+            
+            # 打印发现的图片文件
+            if image_files:
+                print(f"发现的图片文件: {image_files}")
+            else:
+                # 打印所有文件，看看为什么没有匹配到
+                print(f"所有文件: {all_files}")
+        else:
+            print("目录不存在")
+            image_files = []
+            total_images = 0
+            print(f"发现 {total_images} 张图片")
         
         # 检查是否存在现有结果文件
         results = []
