@@ -15,9 +15,9 @@ logger = logging.getLogger(__name__)
 
 # 导入现有的模块功能
 sys.path.append(os.path.dirname(os.path.dirname(os.path.dirname(__file__))))
-from ocr_images import process_images
-from generate_txt import generate_txt_from_ocr
-from generate_epub import generate_epub_from_ocr
+from cli.ocr_images import process_images
+from cli.generate_txt import generate_txt_from_ocr
+from cli.generate_epub import generate_epub_from_ocr
 
 def convert_image_to_png(image_path):
     """将图片转换为PNG格式"""
@@ -202,7 +202,19 @@ def process_ocr(file_path, model, ollama_url, task_id=None, processing_progress=
                     'ocr_results': ocr_results,
                     'file_name': os.path.basename(file_path)
                 }
+            
+            # 按数字顺序排序图片文件
+            def sort_key(filename):
+                # 提取文件名中的数字部分
+                import re
+                match = re.search(r'^(\d+)', filename)
+                if match:
+                    return int(match.group(1))
+                return 0
+            
+            image_files.sort(key=sort_key)
             logger.info(f"图片目录中有 {len(image_files)} 张图片")
+            logger.info(f"排序后的图片文件: {image_files[:10]}..." if len(image_files) > 10 else f"排序后的图片文件: {image_files}")
             
             # 处理图片目录
             ocr_output = os.path.join(temp_output, 'ocr_results.json')
