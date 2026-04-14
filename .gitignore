@@ -21,3 +21,17 @@ test_ocr_results.json
 # Environment
 .env
 venv/
+
+# Uploads directory - track the directory but not its contents
+uploads/
+!uploads/.gitkeep
+
+# Output directory - track the directory but not its contents
+output/
+!output/.gitkeep
+
+# Temp output directory - do not track
+temp_output/
+
+# Logs
+logs/app.log
