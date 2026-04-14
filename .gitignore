@@ -1,0 +1,23 @@
+# Build output
+build/
+dist/
+
+# Python bytecode
+__pycache__/
+*.pyc
+
+# OCR results
+ocr_results.json
+ocr_results.txt
+test_ocr_results.json
+
+# PyInstaller spec file
+*.spec
+
+# IDE
+.vscode/
+.idea/
+
+# Environment
+.env
+venv/
