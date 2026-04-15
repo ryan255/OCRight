@@ -134,10 +134,14 @@ def perform_ocr():
     file_path = data.get('file_path')
     model = data.get('model')
     ollama_url = data.get('ollama_url', 'http://localhost:11434')
+    retry_count = data.get('retry_count', 3)
+    delay_time = data.get('delay_time', 3)
     
     logger.info(f"文件路径: {file_path}")
     logger.info(f"模型: {model}")
     logger.info(f"Ollama URL: {ollama_url}")
+    logger.info(f"重试次数: {retry_count}")
+    logger.info(f"识别间隔: {delay_time}秒")
     
     if not file_path or not model:
         logger.error(f"缺少必要参数: file_path={file_path}, model={model}")
@@ -164,7 +168,7 @@ def perform_ocr():
             logger.info(f"任务 {task_id}: PDF上传成功，开始拆分图片...")
             
             # 执行OCR处理
-            result = ocr_utils.process_ocr(file_path, model, ollama_url, task_id, processing_progress)
+            result = ocr_utils.process_ocr(file_path, model, ollama_url, task_id, processing_progress, retry_count, delay_time)
             
             # 更新进度
             processing_progress[task_id]['status'] = 'completed'
@@ -281,6 +285,8 @@ def save_config():
     logger.info(f"接收到保存配置请求: {data}")
     url = data.get('url')
     model = data.get('model')
+    retry_count = data.get('retry_count', 3)
+    delay_time = data.get('delay_time', 3)
     
     if not url:
         logger.error("缺少Ollama服务地址")
@@ -290,9 +296,9 @@ def save_config():
         }), 400
     
     try:
-        success = config_utils.save_ollama_config(url, model)
+        success = config_utils.save_ollama_config(url, model, retry_count, delay_time)
         if success:
-            logger.info(f"配置保存成功: {url}, {model}")
+            logger.info(f"配置保存成功: {url}, {model}, retry_count={retry_count}, delay_time={delay_time}")
             return jsonify({
                 'status': 'success',
                 'message': '配置保存成功'

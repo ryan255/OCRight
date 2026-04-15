@@ -28,12 +28,16 @@ def get_ollama_config():
     config = load_config()
     return {
         'url': config.get('ollama_url', 'http://localhost:11434'),
-        'model': config.get('preferred_model', '')
+        'model': config.get('preferred_model', ''),
+        'retry_count': config.get('retry_count', 3),
+        'delay_time': config.get('delay_time', 3)
     }
 
-def save_ollama_config(url, model):
+def save_ollama_config(url, model, retry_count=3, delay_time=3):
     """保存Ollama配置"""
     config = load_config()
     config['ollama_url'] = url
     config['preferred_model'] = model
+    config['retry_count'] = retry_count
+    config['delay_time'] = delay_time
     return save_config(config)

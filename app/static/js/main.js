@@ -28,6 +28,8 @@ document.addEventListener('DOMContentLoaded', function() {
     const checkOllama = document.getElementById('checkOllama');
     const ollamaStatus = document.getElementById('ollamaStatus');
     const modelSelect = document.getElementById('modelSelect');
+    const retryCount = document.getElementById('retryCount');
+    const delayTime = document.getElementById('delayTime');
     const startProcess = document.getElementById('startProcess');
     const progressBar = document.getElementById('progressBar').querySelector('.progress-bar');
     const statusMessage = document.getElementById('statusMessage');
@@ -331,7 +333,9 @@ document.addEventListener('DOMContentLoaded', function() {
                     body: JSON.stringify({
                         file_path: fileUrl,
                         model: modelSelect.value,
-                        ollama_url: ollamaUrl.value
+                        ollama_url: ollamaUrl.value,
+                        retry_count: parseInt(retryCount.value),
+                        delay_time: parseInt(delayTime.value)
                     })
                 });
             } else {
@@ -583,7 +587,9 @@ document.addEventListener('DOMContentLoaded', function() {
                     body: JSON.stringify({
                         file_path: fileUrl,
                         model: modelSelect.value,
-                        ollama_url: ollamaUrl.value
+                        ollama_url: ollamaUrl.value,
+                        retry_count: parseInt(retryCount.value),
+                        delay_time: parseInt(delayTime.value)
                     })
                 });
             } else {
@@ -653,6 +659,12 @@ document.addEventListener('DOMContentLoaded', function() {
                     if (config.url) {
                         ollamaUrl.value = config.url;
                     }
+                    if (config.retry_count !== undefined) {
+                        retryCount.value = config.retry_count.toString();
+                    }
+                    if (config.delay_time !== undefined) {
+                        delayTime.value = config.delay_time.toString();
+                    }
                     if (config.model) {
                         // 先检查模型是否存在，如果存在则选择
                         checkOllama.click();
@@ -673,7 +685,9 @@ document.addEventListener('DOMContentLoaded', function() {
             },
             body: JSON.stringify({
                 url: url,
-                model: model
+                model: model,
+                retry_count: parseInt(retryCount.value),
+                delay_time: parseInt(delayTime.value)
             })
         })
         .then(response => response.json())

@@ -46,7 +46,7 @@ def convert_image_to_png(image_path):
             print(f"读取原始图片失败: {e}")
             return None
 
-def process_ocr(file_path, model, ollama_url, task_id=None, processing_progress=None):
+def process_ocr(file_path, model, ollama_url, task_id=None, processing_progress=None, retry_count=3, delay_time=3):
     """处理OCR任务"""
     logger.info(f"开始处理OCR任务")
     logger.info(f"文件路径: {file_path}")
@@ -54,6 +54,8 @@ def process_ocr(file_path, model, ollama_url, task_id=None, processing_progress=
     logger.info(f"任务ID: {task_id}")
     logger.info(f"模型: {model}")
     logger.info(f"Ollama URL: {ollama_url}")
+    logger.info(f"重试次数: {retry_count}")
+    logger.info(f"识别间隔: {delay_time}秒")
     
     file_ext = os.path.splitext(file_path)[1].lower()
     logger.info(f"文件扩展名: {file_ext}")
@@ -274,13 +276,13 @@ def process_ocr(file_path, model, ollama_url, task_id=None, processing_progress=
                     logger.info(f"使用模型: {model}")
                     
                     # 编码图片
-                    max_retries = 3
-                    retry_delay = 2  # 秒
-                    retry_count = 0
+                    max_retries = retry_count
+                    retry_delay = delay_time
+                    retry_count_current = 0
                     text = ""
                     success = False
                     
-                    while retry_count < max_retries and not success:
+                    while retry_count_current < max_retries and not success:
                         try:
                             # 将图片转换为PNG格式
                             image_data = convert_image_to_png(image_path)
@@ -318,9 +320,9 @@ def process_ocr(file_path, model, ollama_url, task_id=None, processing_progress=
                             success = True
                             logger.info(f"图片处理成功")
                         except Exception as e:
-                            retry_count += 1
-                            logger.error(f"处理第 {i+1} 张图片时出错 (重试 {retry_count}/{max_retries}): {e}")
-                            if retry_count < max_retries:
+                            retry_count_current += 1
+                            logger.error(f"处理第 {i+1} 张图片时出错 (重试 {retry_count_current}/{max_retries}): {e}")
+                            if retry_count_current < max_retries:
                                 logger.info(f"{retry_delay}秒后重试...")
                                 import time
                                 time.sleep(retry_delay)
@@ -346,10 +348,11 @@ def process_ocr(file_path, model, ollama_url, task_id=None, processing_progress=
                     logger.info(f"已完成第 {i+1} 张图片的识别")
                     logger.info(f"当前已处理 {len(results)} 张图片")
                     
-                    # 每次识别完成后休息3秒，避免显卡过热
-                    logger.info("识别完成，休息3秒...")
-                    import time
-                    time.sleep(3)
+                    # 每次识别完成后休息指定时间，避免显卡过热
+                    if delay_time > 0:
+                        logger.info(f"识别完成，休息{delay_time}秒...")
+                        import time
+                        time.sleep(delay_time)
                 except Exception as e:
                     logger.error(f"处理第 {i+1} 张图片时出错: {e}")
                     import traceback

@@ -1,4 +1,6 @@
 {
   "ollama_url": "http://127.0.0.1:11434",
-  "preferred_model": "huihui_ai/qwen2.5-vl-abliterated:7b"
+  "preferred_model": "huihui_ai/qwen2.5-vl-abliterated:7b",
+  "retry_count": 3,
+  "delay_time": 3
 }
